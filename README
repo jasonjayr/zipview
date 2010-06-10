@@ -1,0 +1,48 @@
+zipview
+-------
+June 2010
+
+Jason Rodrigues
+jasonjayr+oss@gmail.com
+
+I needed to make a web site that hosted a product catalog that let users download a zip file
+of all images in a line, but also see individual images.  This script permits me to simply
+place the .zip files on the host, and then I can link directly to the images inside the zip file,
+rather than storing the large images twice on my small vps.
+
+This is a *very* quick + dirty script.  No effort is made to efficently send
+data from the decompressed archive to the client.  This is not intended to be
+used on high-load sites. 
+
+requires
+--------
+
+ * Plack (Builder, MIME)
+ * Archive::Zip
+ * perl 5.8.8+
+
+
+nginx config
+------------
+
+Add this to your "server" section.  Note on debian + ubuntu /etc/nginx/fastcgi_params is installed
+by the package manager, and includes some environment variables needed for FastCGI.
+
+	location ~ \.zip/.*$ {
+		fastcgi_pass unix:/home/mystik/zipview/fcgi.sock;
+		fastcgi_param SCRIPT_FILENAME /home/mystik/zipview/testroot$fastcgi_script_name;
+		fastcgi_param PATH_INFO $fastcgi_script_name;
+		include /etc/nginx/fastcgi_params;
+	}
+
+
+license
+-------
+Copyright 2010 
+
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. 
